@@ -24,7 +24,12 @@ def main(args):
     if args.seed:
         seed=args.seed
     else:
+        # NOTE: --seed 0 (the default) picks a RANDOM seed, not seed 0 —
+        # the printed line is the effective seed actually used, so runs
+        # are auditable/reproducible even when randomized.
         seed=int(np.random.randint(0, high=999, size=1, dtype=int)[0])
+        print(f"--seed 0 requested: randomly picked seed {seed} "
+              "(pass --seed <n> with n>0 for deterministic sampling)")
 
     torch.manual_seed(seed)
     random.seed(seed)
