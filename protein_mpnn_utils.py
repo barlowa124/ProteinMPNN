@@ -21,6 +21,8 @@ def parse_fasta(filename,limit=-1, omit=[]):
     lines = open(filename, "r")
     for line in lines:
         line = line.rstrip()
+        if not line:
+            continue
         if line[0] == ">":
             if len(header) == limit:
                 break
@@ -601,7 +603,7 @@ def gather_edges(edges, neighbor_idx):
 def gather_nodes(nodes, neighbor_idx):
     # Features [B,N,C] at Neighbor indices [B,N,K] => [B,N,K,C]
     # Flatten and expand indices per batch [B,N,K] => [B,NK] => [B,NK,C]
-    neighbors_flat = neighbor_idx.view((neighbor_idx.shape[0], -1))
+    neighbors_flat = neighbor_idx.reshape((neighbor_idx.shape[0], -1))
     neighbors_flat = neighbors_flat.unsqueeze(-1).expand(-1, -1, nodes.size(2))
     # Gather and re-pack
     neighbor_features = torch.gather(nodes, 1, neighbors_flat)
